@@ -4,44 +4,62 @@ import javafx.application.Platform
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
-import javafx.scene.control.Label
-import javafx.scene.control.ProgressIndicator
-import javafx.scene.control.Slider
-import javafx.scene.control.TextField
+import javafx.scene.control.Alert
+import javafx.scene.control.ButtonType
+import javafx.scene.layout.AnchorPane
+import javafx.stage.FileChooser
+import org.fxmisc.flowless.VirtualizedScrollPane
+import org.fxmisc.richtext.CodeArea
+import org.fxmisc.richtext.LineNumberFactory
 import java.net.URL
-import java.text.DecimalFormat
+import java.nio.file.Files
 import java.util.*
 
 class MainWindowController : Initializable {
   @FXML
-  private lateinit var input: TextField
-  @FXML
-  private lateinit var output: Label
-  @FXML
-  private lateinit var progress: ProgressIndicator
-  @FXML
-  private lateinit var progsimulator: Slider
+  private lateinit var codePane: AnchorPane
+
+  private var codeArea = CodeArea()
+
+  private val extensionFilters = arrayListOf(
+      FileChooser.ExtensionFilter("TeX files", "*.tex"),
+      FileChooser.ExtensionFilter("TeX class/packages", "*.sty", "*.dtx", "*.cls", "*.ltx"),
+      FileChooser.ExtensionFilter("TeX auxiliary files", "*.aux", "*.bbl", "*.bib"),
+      FileChooser.ExtensionFilter("Lua files", "*.lua"),
+      FileChooser.ExtensionFilter("Asymptote files", "*.asy"))
 
   override fun initialize(p0: URL?, p1: ResourceBundle?) {
-    progsimulator.valueProperty().addListener({ _, _, _ ->
-      progress.progressProperty().set(progsimulator.value / progsimulator.max)
-    })
-  }
-
-  fun openFile(actionEvent: ActionEvent) {
-    output.text = "NIY"
+    codeArea.prefWidthProperty().bind(codePane.widthProperty())
+    codeArea.prefHeightProperty().bind(codePane.heightProperty())
+    codeArea.paragraphGraphicFactory = LineNumberFactory.get(codeArea)
+    codePane.children.add(VirtualizedScrollPane(codeArea))
   }
 
   fun quitApp(actionEvent: ActionEvent) {
     Platform.exit()
   }
 
-  fun processProgress(actionEvent: ActionEvent) {
-    val maxint = Integer.parseInt(input.text) * 10000
-    (0..maxint).forEach {
-      // this doesn't update the UI fast enough
-      progress.progressProperty().set(it.toDouble() / maxint.toDouble())
-      output.text = DecimalFormat("##.##").format(progress.progress)
+  fun openFile(actionEvent: ActionEvent) {
+    val fc = FileChooser()
+    fc.title = "Open TeX-related file"
+    fc.extensionFilters += extensionFilters
+    val ret = fc.showOpenDialog(codePane.scene.window)
+    if (ret != null) {
+      codeArea.appendText(Files.readAllLines(ret.toPath()).joinToString("\n"))
+    } else {
+      Alert(Alert.AlertType.WARNING, "Could not open the file you have not selected.", ButtonType.CLOSE)
+    }
+  }
+
+  fun saveFile(actionEvent: ActionEvent) {
+    val fc = FileChooser()
+    fc.title = "Open TeX-related file"
+    fc.extensionFilters += extensionFilters
+    val ret = fc.showSaveDialog(codePane.scene.window)
+    if (ret != null) {
+      Files.write(ret.toPath(),codeArea.text.toByteArray())
+    } else {
+      Alert(Alert.AlertType.WARNING, "Could not save to the file you have not selected.", ButtonType.CLOSE)
     }
   }
 }

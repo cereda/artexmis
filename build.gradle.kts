@@ -31,10 +31,10 @@ dependencies {
   implementation(kotlin("stdlib-jdk8", kotlin_version))
   implementation(kotlin("runtime", kotlin_version))
   implementation(kotlin("reflect", kotlin_version))
+  implementation("org.fxmisc.richtext:richtextfx:0.9.0")
 }
 
 application {
-  // note: you must append Kt to the main class as this is the Kotlin compilation result
   mainClassName = "com.github.cereda.artexmis.AppMain"
 }
 
