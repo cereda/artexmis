@@ -4,32 +4,56 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.*?>
-<VBox fx:id="mainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.121"
+<VBox fx:id="windowBox" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/mainWindow.css"
+      xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.github.cereda.artexmis.gui.MainWindowController">
-    <MenuBar fx:id="mbMain" prefHeight="29.0" prefWidth="${mainWindow.width}">
-        <Menu text="%file">
-            <MenuItem onAction="#openFile" text="%openfile"/>
-            <MenuItem onAction="#saveFile" text="%savefile"/>
-            <SeparatorMenuItem/>
-            <MenuItem onAction="#quitApp" text="%quitapp">
-                <accelerator>
-                    <KeyCodeCombination alt="UP" code="Q" control="ANY" meta="UP" shift="UP" shortcut="UP"/>
-                </accelerator>
-            </MenuItem>
-        </Menu>
-        <Menu text="%help">
-            <MenuItem text="%about"/>
-        </Menu>
-    </MenuBar>
-    <AnchorPane fx:id="codePane" prefWidth="${mbMain.width}" VBox.vgrow="ALWAYS"/>
-    <HBox fx:id="statusBar" prefWidth="${mbMain.width}" spacing="10">
+    <HBox fx:id="topBar" prefWidth="${windowBox.width}" spacing="5">
         <padding>
-            <Insets left="10.0" top="5.0" bottom="5.0" right="10.0"/>
+            <Insets bottom="2.0" left="10.0" right="5.0" top="5.0"/>
+        </padding>
+        <Label prefHeight="30.0" prefWidth="100.0" text="ArTeXmis"/>
+        <MenuBar>
+            <Menu text="%file">
+                <MenuItem onAction="#openFile" text="%openfile"/>
+                <MenuItem onAction="#saveFile" text="%savefile"/>
+                <SeparatorMenuItem/>
+                <MenuItem onAction="#quitApp" text="%quitapp">
+                    <accelerator>
+                        <KeyCodeCombination alt="UP" code="Q" control="ANY" meta="UP" shift="UP" shortcut="UP"/>
+                    </accelerator>
+                </MenuItem>
+            </Menu>
+            <Menu text="%help">
+                <MenuItem text="%about"/>
+            </Menu>
+        </MenuBar>
+        <Pane prefHeight="0.0" HBox.hgrow="ALWAYS" />
+        <Button styleClass="windowcontrol" onAction="#minimizeWindow" prefHeight="30.0" prefWidth="30.0" text="_"/>
+        <Button styleClass="windowcontrol" onAction="#maximizeWindow" prefHeight="30.0" prefWidth="30.0" text="O"/>
+        <Button styleClass="windowcontrol" onAction="#quitApp" prefHeight="30.0" prefWidth="30.0" text="X"/>
+    </HBox>
+    <SplitPane fx:id="mainPanel" dividerPositions="0.2" prefWidth="${windowBox.width}" VBox.vgrow="ALWAYS">
+        <items>
+            <VBox fx:id="auxContainer">
+                <TitledPane text="Project view">
+
+                </TitledPane>
+                <TitledPane text="Project properties">
+
+                </TitledPane>
+            </VBox>
+            <TabPane fx:id="codePane" side="LEFT">
+
+            </TabPane>
+        </items>
+    </SplitPane>
+    <HBox fx:id="statusBar" prefWidth="${windowBox.width}">
+        <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="2.0"/>
         </padding>
         <HBox HBox.hgrow="ALWAYS">
-            <Label prefHeight="29.0" text="You don't give me enough work!"/>
+            <Label text="Status messages/Code hints"/>
         </HBox>
-        <ProgressBar prefHeight="20.0" prefWidth="100.0"/>
+        <Label text="l:c"/>
     </HBox>
 </VBox>
